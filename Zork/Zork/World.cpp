@@ -1,29 +1,49 @@
 #include "World.h"
+#include "Rooms/Room.h"
+#include "Builders/WorldBuilder.h"
 #include <iostream>
+#include <algorithm>
+using namespace std;
 
-World::World()
+World::World() : m_currentRoom(nullptr)
 {
-    // TODO
+    WorldBuilder::Build(m_rooms, m_currentRoom);
+}
+
+World::~World()
+{
+    for (Room* room : m_rooms)
+        delete room;
 }
 
 void World::Run()
 {
-    std::cout << "Welcome to Zork!\n";
-    std::string input;
+    cout << "Welcome to (placeholder name)!\n";
+    cout << "Made by Pau Bermudez Valle\n";
 
+    if (m_currentRoom)
+        m_currentRoom->Describe();
+
+    string input;
     while (true)
     {
-        std::cout << "> ";
-        std::getline(std::cin, input);
+        cout << "\n> ";
+        getline(cin, input);
 
-        if (input == "quit" || input == "exit")
+        if (!ProcessInput(input))
             break;
-
-        ProcessInput(input);
     }
 }
 
-void World::ProcessInput(const std::string& input)
+bool World::ProcessInput(const string& input)
 {
-    // TODO
+    string cmd = input;
+    transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
+
+    if (cmd == "quit" || cmd == "exit")
+        return false;
+
+    // TODO...
+
+    return true;
 }

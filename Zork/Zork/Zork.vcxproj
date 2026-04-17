@@ -124,15 +124,30 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Builders\WorldBuilder.cpp" />
+    <ClCompile Include="Builders\FirstRoomBuilder.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="World.cpp" />
+    <ClCompile Include="Core\Console.cpp" />
+    <ClCompile Include="Core\Describable.cpp" />
+    <ClCompile Include="Entities\Entity.cpp" />
+    <ClCompile Include="Rooms\Entrance.cpp" />
+    <ClCompile Include="Rooms\Room.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Builders\WorldBuilder.h" />
+    <ClInclude Include="Builders\FirstRoomBuilder.h" />
     <ClInclude Include="World.h" />
+    <ClInclude Include="Core\Console.h" />
+    <ClInclude Include="Core\Describable.h" />
+    <ClInclude Include="Entities\Entity.h" />
+    <ClInclude Include="Rooms\Entrance.h" />
+    <ClInclude Include="Rooms\Room.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\Advanced Programming for AAA Video Games_Online test.pdf" />
     <None Include="resources\conventions.md" />
+    <None Include="resources\TODOs.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
