@@ -83,6 +83,8 @@ bool TalkAction::Execute(World& world, const std::string& args)
 
         std::cout << Bold("You") << ": " << Render(current->options[choice].playerText) << "\n";
         current = current->options[choice].next;
+        if (current && current->onReach)
+            current->onReach(world);
     }
 
     npc->SaveProgress(current);

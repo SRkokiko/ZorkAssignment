@@ -13,6 +13,7 @@ bool HelpAction::Execute(World& world, const std::string& args)
     std::cout << Bold("Available actions:") << "\n";
     std::cout << "  " << Bold("go/enter") << " <entrance> - Move through an entrance\n";
     std::cout << "  " << Bold("use") << " <target> - Use an item or entrance\n";
+    std::cout << "  " << Bold("talk/speak") << " <being> - Start a conversation with someone\n";
     std::cout << "  " << Bold("take/pick") << " <item> - Pick up an item\n";
     std::cout << "  " << Bold("drop") << " <item>  - Drop an item from your inventory\n";
     std::cout << "  " << Bold("inventory/i") << " - List carried items\n";

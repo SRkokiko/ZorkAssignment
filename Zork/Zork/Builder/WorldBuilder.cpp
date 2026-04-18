@@ -69,6 +69,12 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
     Room* mirroredCorridor = mirroredCorridorRoom.get();
     rooms.push_back(std::move(mirroredCorridorRoom));
 
+    // KITCHEN
+    auto kitchenRoom = std::make_unique<Room>("KITCHEN",
+        "The room is a kitchen.");
+    Room* kitchen = kitchenRoom.get();
+    rooms.push_back(std::move(kitchenRoom));
+
     // ── ENTRANCES ─────────────────────────────────────────────────────────────────
 
     // EXTERIOR ENTRANCES 
@@ -103,6 +109,10 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
     auto hallWhiteDoorEntrance = std::make_unique<Entrance>("WHITE DOOR", "Behind you is a {WHITE DOOR}, leading back to the corridor.", corridor, 1);
     Entrance* hallWhiteDoor = hallWhiteDoorEntrance.get();
     hall->AddEntrance(std::move(hallWhiteDoorEntrance));
+
+    // KITCHEN ENTRANCES
+    auto kitchenRoomHallEntrance = std::make_unique<Entrance>("DOOR", "A plain {DOOR} leads back to the inconmensurable room, where the {LADY} rests.", hall, 0);
+    kitchen->AddEntrance(std::move(kitchenRoomHallEntrance));
 
     // ABYSS ENTRANCES
     auto abyssHoleEntrance = std::make_unique<Entrance>("HOLE", "Behind you is a human-shaped {HOLE}, leading back to the corridor.", corridor, 0);
@@ -213,35 +223,79 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
         "Her eyes are fixed on you - piercing, unblinking, as though looking straight through your chest.",
         0));
 
-    // Leaf nodes (no options — dialogue ends after NPC speaks)
-    DialogueNode* nodeEnd = lady->AddNode("Be careful.");
+    DialogueNode* root = lady->AddNode("...");
+    DialogueNode* nodeHello = lady->AddNode("...");
+    DialogueNode* nodeAreYouReal = lady->AddNode("Yes.");
+    DialogueNode* nodeIAmToo = lady->AddNode("Yes. We all are. *She smiles");
+    DialogueNode* nodeWhoAreYou = lady->AddNode("I am.");
+    DialogueNode* nodeWhatIsThisPlace = lady->AddNode("This is.");
+    DialogueNode* nodeWhatShouldIDo = lady->AddNode("What do you want to do?");
+    DialogueNode* nodeYouAreAlive = lady->AddNode("You are alive.");
+    DialogueNode* nodeYouAreFound = lady->AddNode("I found you. *She smiles");
+    DialogueNode* nodeEat = lady->AddNode("The {YELLOW ROOM} will lead you to the kitchen. Help yourself; for I do not hunger. *She smiles");
+    DialogueNode* nodeEnd = lady->AddNode("Do NOT eat the {FLESH}. *She smiles");
 
-    // Branch nodes
-    DialogueNode* nodeAreYouReal = lady->AddNode(
-        "Yes",
-        {
-            { "Okay", nullptr },
-            { "...", nullptr }
-        });
+    root->SetOptions({
+        { "Hello?", nodeHello },
+        { "...", nullptr }
+    });
 
-    DialogueNode* nodeHello = lady->AddNode(
-        "... Hello.",
-        {
-            { "Are you real?", nodeAreYouReal },
-            { "Who are you?", nodeEnd },
-            { "What is this place", nodeEnd },
-        });
+    nodeHello->SetOptions({
+        { "Are you real?",  nodeAreYouReal },
+        { "Who are you?", nodeWhoAreYou },
+        { "What is this place?", nodeWhatIsThisPlace },
+        { "What should I do?", nodeWhatShouldIDo },
+    });
 
-    // Root node
-    DialogueNode* root = lady->AddNode(
-        "...",
-        {
-            { "Hello?", nodeHello },
-            { "...", nullptr }
-        });
+    nodeAreYouReal->SetOptions({
+        { "Hum... Okay.", nodeHello },
+        { "...", nodeHello }
+    });
+
+    nodeWhoAreYou->SetOptions({
+        { "Hum... Okay.", nodeHello },
+        { "I am too.", nodeIAmToo }
+    });
+
+    nodeIAmToo->SetOptions({
+        { "...", nodeHello }
+    });
+
+    nodeWhatIsThisPlace->SetOptions({
+        { "...", nodeHello }
+    });
+
+    nodeWhatShouldIDo->SetOptions({
+        { "Live.", nodeYouAreAlive },
+        { "Be found.", nodeYouAreFound },
+        { "Eat.", nodeEat }
+    });
+
+    nodeYouAreAlive->SetOptions({
+        { "I am?", nodeHello }
+    });
+
+    nodeYouAreFound->SetOptions({
+        { "Thanks?", nodeHello }
+    });
+
+    nodeEat->SetOptions({
+        { "Thanks?", nodeEnd }
+    });
+
+    nodeEnd->onReach = [hall, kitchen](World&) {
+        if (!hall->GetEntrance("YELLOW DOOR")) {
+            std::cout << Render("... {YELLOW DOOR}? What {YELLOW DOOR}?\n");
+            hall->AddEntrance(std::make_unique<Entrance>("YELLOW DOOR",
+                "Beyond the {WHITE DOOR} awaits a {YELLOW DOOR}. The paint is fresh - still bleeding down the wood. "
+                "That door was not there before. You are certain of this. You are trying very hard to remain certain of this.",
+                kitchen,
+                hall->GetNextOrder()));
+        }
+    };
 
     lady->SetDialogueRoot(root);
 
-    startRoom = hall;
-    //startRoom = exterior;
+    //startRoom = hall;
+    startRoom = exterior;
 }
