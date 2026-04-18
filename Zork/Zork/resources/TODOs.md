@@ -1,7 +1,5 @@
 ## CODE
-- Expand action verbs
 - Items inside of items
-- Use items
 - NPC behaviour
 
 ## GAME

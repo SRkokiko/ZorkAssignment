@@ -35,7 +35,7 @@ namespace ActionVerbs {
     }
 
     inline const std::vector<std::string>& Help() { 
-        static const std::vector<std::string> v = { "help", "?" };                   
+        static const std::vector<std::string> v = { "help", "h", "?" };                   
         return v; 
     }
 

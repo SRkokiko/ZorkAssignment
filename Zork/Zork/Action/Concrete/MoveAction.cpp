@@ -4,6 +4,7 @@
 #include "../../Map/Room.h"
 #include "../../Map/Entrance.h"
 #include "../../Core/Player.h"
+#include "../../Entity/Concrete/Item.h"
 #include "../../Helper/Console.h"
 #include <iostream>
 
