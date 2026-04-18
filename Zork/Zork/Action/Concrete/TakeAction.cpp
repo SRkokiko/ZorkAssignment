@@ -37,7 +37,7 @@ bool TakeAction::Execute(World& world, const std::string& args)
 
     if (!match->IsPickable())
     {
-        std::cout << "You can't pick that up.\n";
+        std::cout << Render("You can't pick that up.") << "\n";
         return true;
     }
 

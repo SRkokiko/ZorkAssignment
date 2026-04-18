@@ -12,11 +12,13 @@
 #include "../Helper/Console.h"
 #include <iostream>
 #include <cstdlib>
+#include <ctime>
 #include "../Enums/UnknownPhrases.h"
 
 World::World()
     : m_player("Player")
 {
+    std::srand(static_cast<unsigned>(std::time(nullptr)));
     Room* startRoom = nullptr;
     WorldBuilder::Build(m_rooms, m_items, startRoom);
 
@@ -34,6 +36,16 @@ World::World()
 Player& World::GetPlayer()
 {
     return m_player;
+}
+
+void World::SetGameOver()
+{
+    m_gameOver = true;
+}
+
+bool World::IsGameOver() const
+{
+    return m_gameOver;
 }
 
 void World::Run()
@@ -65,7 +77,7 @@ void World::Run()
         std::cout << "\n> ";
         std::getline(std::cin, input);
 
-        if (!ProcessInput(input))
+        if (!ProcessInput(input) || m_gameOver)
             break;
     }
 }

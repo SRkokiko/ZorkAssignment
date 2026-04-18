@@ -1,4 +1,5 @@
 #include "Room.h"
+#include "../Core/World.h"
 #include "../Helper/Console.h"
 #include <iostream>
 #include <algorithm>
@@ -62,6 +63,22 @@ int Room::GetNextOrder() const
     if (m_describables.empty())
         return 0;
     return (*m_describables.rbegin())->GetOrder() + 1;
+}
+
+void Room::SetOnEntry(std::function<void(World&)> callback)
+{
+    m_onEntry = std::move(callback);
+}
+
+bool Room::HasEntryEffect() const
+{
+    return static_cast<bool>(m_onEntry);
+}
+
+void Room::OnEntry(World& world) const
+{
+    if (m_onEntry)
+        m_onEntry(world);
 }
 
 void Room::Describe() const

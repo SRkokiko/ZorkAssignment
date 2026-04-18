@@ -6,8 +6,7 @@
 #include "../Core/World.h"
 #include <iostream>
 
-// Registers an item with the world and places it in a room
-static Item* PlaceItem(std::vector<std::unique_ptr<Item>>& items, Room* room, std::unique_ptr<Item> item)
+static Item* PlaceItem(std::vector<std::unique_ptr<Item>>& items, Room* room, std::unique_ptr<Item> item) // Raw pointer is extracted after push_back to avoid invalidation if the unique_ptr were moved first
 {
     items.push_back(std::move(item));
     Item* raw = items.back().get();
@@ -18,6 +17,23 @@ static Item* PlaceItem(std::vector<std::unique_ptr<Item>>& items, Room* room, st
 void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<std::unique_ptr<Item>>& items, Room*& startRoom)
 {
     // ── ROOMS ─────────────────────────────────────────────────────────────────
+    
+    // FOREST
+    auto forestRoom = std::make_unique<Room>("FOREST", "...");
+    Room* forest = forestRoom.get();
+    rooms.push_back(std::move(forestRoom));
+
+    forest->SetOnEntry([](World& world) {
+        std::cout <<
+            "\nYou run. You run until your lungs burn and your legs give out. "
+            "The forest swallows you whole - dark, indifferent, eternal. "
+            "Behind you, the mansion is gone, as if it never existed. "
+            "You collapse onto the cold earth and stare up at a sky full of stars that do not care. "
+            "\nYou are finally free."
+            "\n\n"
+            "--- THE END ---\n\n";
+        world.SetGameOver();
+        });
 
     // EXTERIOR
     auto exteriorRoom = std::make_unique<Room>("EXTERIOR",
@@ -54,6 +70,12 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
     Room* endCorridor = endCorridorRoom.get();
     rooms.push_back(std::move(endCorridorRoom));
 
+    // MIRRORED CORRIDOR
+    auto mirroredCorridorRoom = std::make_unique<Room>("MIRRORED CORRIDOR",
+        "You step back.");
+    Room* mirroredCorridor = mirroredCorridorRoom.get();
+    rooms.push_back(std::move(mirroredCorridorRoom));
+
     // ── ENTRANCES ─────────────────────────────────────────────────────────────────
 
     // ── EXTERIOR ENTRANCES ────────────────────────────────────────────────────
@@ -62,6 +84,9 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
     exteriorDoorEntrance->Lock("The knob is a grotesque mass of overgrown fungus, soft and glistening, faintly pulsing at your touch. You twist it. The {DOOR} won't budge.");
     Entrance* exteriorDoor = exteriorDoorEntrance.get();
     exterior->AddEntrance(std::move(exteriorDoorEntrance));
+
+    auto exteriorForestPathEntrance = std::make_unique<Entrance>("FOREST", "I cou- I could always go back into the {FOREST}...", forest, 2);
+    exterior->AddEntrance(std::move(exteriorForestPathEntrance));
 
     // ── CORRIDOR ENTRANCES ────────────────────────────────────────────────────
 
@@ -98,10 +123,29 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
 
     // ── END CORRIDOR ENTRANCES ────────────────────────────────────────────────
 
-    auto endCorridorBackEntrance = std::make_unique<Entrance>("BACK", "Behind you the corridor leads {BACK}.", corridor, 1);
+    auto endCorridorBackEntrance = std::make_unique<Entrance>("BACK", "Behind you the corridor leads {BACK}.", mirroredCorridor, 1);
     Entrance* endCorridorBack = endCorridorBackEntrance.get();
     endCorridor->AddEntrance(std::move(endCorridorBackEntrance));
 
+    // ── MIRRORED CORRIDOR ENTRANCES ───────────────────────────────────────────
+
+    auto mirroredCorridorDoorEntrance = std::make_unique<Entrance>("DOOR", "In front of you stands a massive wooden {DOOR}, leading out.", exterior, 0);
+    mirroredCorridorDoorEntrance->Lock("The {DOOR} won't open.");
+    Entrance* mirroredCorridorDoor = mirroredCorridorDoorEntrance.get();
+    mirroredCorridor->AddEntrance(std::move(mirroredCorridorDoorEntrance));
+
+    auto mirroredCorridorWhiteDoorEntrance = std::make_unique<Entrance>("WHITE DOOR", "To your left, there is a {WHITE DOOR}. It seems to have been recently painted.", hall, 1);
+    Entrance* mirroredCorridorWhiteDoor = mirroredCorridorWhiteDoorEntrance.get();
+    mirroredCorridor->AddEntrance(std::move(mirroredCorridorWhiteDoorEntrance));
+
+    auto mirroredCorridorHoleEntrance = std::make_unique<Entrance>("HOLE", "To your right lies a human-shaped {HOLE}. As your vision settles in, you realize it perfectly matches your silhouette. Chills run down your spine. What... What on earth?!", kitchen, 2);
+    mirroredCorridorHoleEntrance->Lock("... I am not going that way.");
+    Entrance* mirroredCorridorHole = mirroredCorridorHoleEntrance.get();
+    mirroredCorridor->AddEntrance(std::move(mirroredCorridorHoleEntrance));
+
+    auto mirroredCorridorFurtherEntrance = std::make_unique<Entrance>("BACK", "I could also go {BACK}...", endCorridor, 3);
+    Entrance* mirroredCorridorFurther = mirroredCorridorFurtherEntrance.get();
+    mirroredCorridor->AddEntrance(std::move(mirroredCorridorFurtherEntrance));
 
     // ── ITEMS ─────────────────────────────────────────────────────────────────
 
@@ -114,11 +158,13 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
 
     rustyKey->AddTargetRoom(exterior);
     rustyKey->AddTargetRoom(corridor);
-    rustyKey->SetOnUse([exteriorDoor, corridorDoor, exterior](World& world) {
+    rustyKey->AddTargetRoom(mirroredCorridor);
+    rustyKey->SetOnUse([exteriorDoor, corridorDoor, mirroredCorridorDoor, exterior](World& world) {
         bool isOutside = world.GetPlayer().GetCurrentRoom() == exterior;
         if (exteriorDoor->IsLocked()) {
             exteriorDoor->Unlock();
             corridorDoor->Unlock();
+            mirroredCorridorDoor->Unlock();
             if (isOutside)
                 std::cout << Render("You push the {RUSTY KEY} through a mass of living fungus. The {DOOR} creaks, followed by a heavy, resonant click.") << "\n";
             else
@@ -126,6 +172,7 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
         } else {
             exteriorDoor->Lock("The knob is a grotesque mass of overgrown fungus, soft and glistening, faintly pulsing at your touch. You twist it. The {DOOR} won't budge.");
             corridorDoor->Lock("The {DOOR} won't open.");
+            mirroredCorridorDoor->Lock("The {DOOR} won't open.");
             if (isOutside)
                 std::cout << Render("You push the {RUSTY KEY} through a mass of living fungus. The {DOOR} creaks, followed by a heavy, resonant click.") << "\n";
             else

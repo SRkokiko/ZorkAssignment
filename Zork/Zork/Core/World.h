@@ -19,6 +19,9 @@ public:
 
     Player& GetPlayer();
 
+    void SetGameOver();
+    bool IsGameOver() const;
+
 private:
     /// Processes player input
     bool ProcessInput(const std::string& input);
@@ -34,4 +37,5 @@ private:
 
     // Player is a value member (not a pointer) because there is always exactly one player — no heap allocation needed
     Player m_player;
+    bool m_gameOver = false;
 };
