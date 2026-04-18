@@ -8,6 +8,7 @@
 #include "../Action/Concrete/InventoryAction.h"
 #include "../Action/Concrete/LookAction.h"
 #include "../Action/Concrete/HelpAction.h"
+#include "../Action/Concrete/TalkAction.h"
 #include "Player.h"
 #include "../Helper/Console.h"
 #include <iostream>
@@ -20,7 +21,7 @@ World::World()
 {
     std::srand(static_cast<unsigned>(std::time(nullptr)));
     Room* startRoom = nullptr;
-    WorldBuilder::Build(m_rooms, m_items, startRoom);
+    WorldBuilder::Build(m_rooms, m_items, m_npcs, startRoom);
 
     m_player.SetCurrentRoom(startRoom);
 
@@ -31,6 +32,7 @@ World::World()
     m_actions.push_back(std::make_unique<InventoryAction>());
     m_actions.push_back(std::make_unique<LookAction>());
     m_actions.push_back(std::make_unique<HelpAction>());
+    m_actions.push_back(std::make_unique<TalkAction>());
 }
 
 Player& World::GetPlayer()

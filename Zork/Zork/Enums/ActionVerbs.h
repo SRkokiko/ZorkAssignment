@@ -39,4 +39,9 @@ namespace ActionVerbs {
         return v;
     }
 
+    inline const std::vector<std::string>& Talk() {
+        static const std::vector<std::string> v = { "talk", "speak", "chat", "ask", "greet" };
+        return v;
+    }
+
 }

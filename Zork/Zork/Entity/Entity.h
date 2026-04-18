@@ -7,7 +7,7 @@ class Room;
 class Entity : public Describable
 {
 public:
-    Entity(const std::string& name, const std::string& description, int order = 0, bool pickable = true);
+    Entity(const std::string& name, const std::string& description, int order = 0, bool pickable = false);
 
     bool IsPickable() const { return m_pickable; }
 

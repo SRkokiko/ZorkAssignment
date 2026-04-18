@@ -37,7 +37,7 @@ bool MoveAction::Execute(World& world, const std::string& args)
     world.GetPlayer().SetCurrentRoom(next);
 
     if (next->HasEntryEffect())
-        next->OnEntry(world);
+        next->OnEntry(world, current);
 
     if (!world.IsGameOver())
         next->Describe();

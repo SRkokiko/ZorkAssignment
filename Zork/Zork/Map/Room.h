@@ -45,14 +45,14 @@ public:
     /// Returns one higher than the current highest order value among all describables in the room
     int GetNextOrder() const;
 
-    /// Registers a callback invoked when the player enters this room
-    void SetOnEntry(std::function<void(World&)> callback);
+    /// Registers a callback invoked when the player enters this room; from is the room they came from
+    void SetOnEntry(std::function<void(World&, Room*)> callback);
 
     /// Returns true if an entry callback is registered
     bool HasEntryEffect() const;
 
-    /// Executes the entry callback
-    void OnEntry(World& world) const;
+    /// Executes the entry callback; from is the room the player came from
+    void OnEntry(World& world, Room* from) const;
 
     /// Prints name, description, then all entrances and entities interleaved by order
     void Describe() const override;
@@ -61,5 +61,5 @@ private:
     std::multiset<Describable*, DescribableOrderComparator> m_describables; // non-owning; sorted by order for Describe()
     std::vector<std::unique_ptr<Entrance>> m_entrances; // owned by this room
     std::vector<Entity*>   m_entities;  // non-owning; World holds the unique_ptrs that own these
-    std::function<void(World&)> m_onEntry;
+    std::function<void(World&, Room*)> m_onEntry;
 };

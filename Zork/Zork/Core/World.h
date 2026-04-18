@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "../Action/Action.h"
 #include "../Entity/Concrete/Item.h"
+#include "../Entity/Concrete/NPC.h"
 #include "../Map/Room.h"
 
 /// Owns all rooms and drives the main game loop
@@ -34,6 +35,7 @@ private:
     std::list<std::unique_ptr<Room>> m_rooms;
     std::vector<std::unique_ptr<Action>> m_actions;
     std::vector<std::unique_ptr<Item>> m_items;
+    std::vector<std::unique_ptr<NPC>> m_npcs;
 
     // Player is a value member (not a pointer) because there is always exactly one player — no heap allocation needed
     Player m_player;

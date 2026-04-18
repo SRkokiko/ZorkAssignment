@@ -65,7 +65,7 @@ int Room::GetNextOrder() const
     return (*m_describables.rbegin())->GetOrder() + 1;
 }
 
-void Room::SetOnEntry(std::function<void(World&)> callback)
+void Room::SetOnEntry(std::function<void(World&, Room*)> callback)
 {
     m_onEntry = std::move(callback);
 }
@@ -75,10 +75,10 @@ bool Room::HasEntryEffect() const
     return static_cast<bool>(m_onEntry);
 }
 
-void Room::OnEntry(World& world) const
+void Room::OnEntry(World& world, Room* from) const
 {
     if (m_onEntry)
-        m_onEntry(world);
+        m_onEntry(world, from);
 }
 
 void Room::Describe() const
