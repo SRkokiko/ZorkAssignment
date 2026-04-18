@@ -125,7 +125,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Action\Concrete\DropAction.cpp" />
+    <ClCompile Include="Action\Concrete\HelpAction.cpp" />
     <ClCompile Include="Action\Concrete\InventoryAction.cpp" />
+    <ClCompile Include="Action\Concrete\LookAction.cpp" />
     <ClCompile Include="Action\Concrete\TakeAction.cpp" />
     <ClCompile Include="Action\Concrete\UseAction.cpp" />
     <ClCompile Include="Builder\WorldBuilder.cpp" />
@@ -144,12 +146,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Action\Concrete\DropAction.h" />
+    <ClInclude Include="Action\Concrete\HelpAction.h" />
     <ClInclude Include="Action\Concrete\InventoryAction.h" />
+    <ClInclude Include="Action\Concrete\LookAction.h" />
     <ClInclude Include="Action\Concrete\TakeAction.h" />
     <ClInclude Include="Action\Concrete\UseAction.h" />
     <ClInclude Include="Builder\WorldBuilder.h" />
     <ClInclude Include="Core\Player.h" />
     <ClInclude Include="Core\World.h" />
+    <ClInclude Include="Enums\ActionVerbs.h" />
+    <ClInclude Include="Enums\UnknownPhrases.h" />
     <ClInclude Include="Helper\Console.h" />
     <ClInclude Include="Core\Describable.h" />
     <ClInclude Include="Entity\Entity.h" />

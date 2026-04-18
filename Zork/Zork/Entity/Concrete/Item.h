@@ -4,5 +4,10 @@
 class Item : public Entity
 {
 public:
-    Item(const std::string& name, const std::string& description, int order = 0, bool pickable = true);
+    Item(const std::string& name, const std::string& description, int order = 0, bool pickable = true, const std::string& displacedDescription = "");
+
+    void Describe() const override;
+
+private:
+    std::string m_displacedDescription;
 };

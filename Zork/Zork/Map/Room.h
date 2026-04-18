@@ -39,6 +39,9 @@ public:
     /// Returns all entities in the room
     const std::vector<Entity*>& GetEntities() const;
 
+    /// Returns one higher than the current highest order value among all describables in the room
+    int GetNextOrder() const;
+
     /// Prints name, description, then all entrances and entities interleaved by order
     void Describe() const override;
 

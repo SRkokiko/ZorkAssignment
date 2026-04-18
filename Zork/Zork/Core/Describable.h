@@ -11,6 +11,7 @@ public:
     const std::string& GetName() const;
     const std::string& GetDescription() const;
     int GetOrder() const;
+    void SetOrder(int order);
 
     /// Prints name and description
     virtual void Describe() const;

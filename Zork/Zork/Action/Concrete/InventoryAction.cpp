@@ -1,12 +1,13 @@
 #include "InventoryAction.h"
+#include "../../Enums/ActionVerbs.h"
 #include "../../Core/World.h"
 #include "../../Entity/Entity.h"
 #include "../../Core/Player.h"
+#include "../../Helper/Console.h"
 #include <iostream>
-using namespace std;
 
 InventoryAction::InventoryAction()
-    : Action({"inventory", "i", "items"})
+    : Action(ActionVerbs::Inventory())
 {}
 
 bool InventoryAction::Execute(World& world, const std::string& args)
@@ -14,12 +15,12 @@ bool InventoryAction::Execute(World& world, const std::string& args)
     const auto& inv = world.GetPlayer().GetInventory();
     if (inv.empty())
     {
-        cout << "You are carrying nothing.\n";
+        std::cout << "You are carrying nothing.\n";
         return true;
     }
 
-    cout << "You are carrying:\n";
+    std::cout << "You are carrying:\n";
     for (Entity* entity : inv)
-        cout << "  - " << entity->GetName() << "\n";
+        std::cout << "  - " << Bold(entity->GetName()) << "\n";
     return true;
 }

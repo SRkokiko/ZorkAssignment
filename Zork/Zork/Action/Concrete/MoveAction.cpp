@@ -1,12 +1,14 @@
 #include "MoveAction.h"
+#include "../../Enums/ActionVerbs.h"
 #include "../../Core/World.h"
 #include "../../Map/Room.h"
 #include "../../Map/Entrance.h"
 #include "../../Core/Player.h"
+#include "../../Helper/Console.h"
 #include <iostream>
 
 MoveAction::MoveAction() // Also called directly by UseAction when the target is an entrance, so "use door" and "go door" both resolve through the same logic
-    : Action({"go", "walk", "enter"})
+    : Action(ActionVerbs::Move())
 {}
 
 bool MoveAction::Execute(World& world, const std::string& args)
@@ -23,7 +25,7 @@ bool MoveAction::Execute(World& world, const std::string& args)
         return false;
     if (entrance->IsLocked())
     {
-        std::cout << entrance->GetLockedDescription() << "\n";
+        std::cout << Render(entrance->GetLockedDescription()) << "\n";
         return true;
     }
 

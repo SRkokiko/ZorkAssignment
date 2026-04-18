@@ -15,23 +15,26 @@ static Item* PlaceItem(std::vector<std::unique_ptr<Item>>& items, Room* room, st
 void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<std::unique_ptr<Item>>& items, Room*& startRoom)
 {
     // ROOMS
-    auto exteriorRoom = std::make_unique<Room>("Exterior", "You are in the {exterior}...");
+    auto exteriorRoom = std::make_unique<Room>("EXTERIOR", 
+    "The mansion rises before you, vast and obscene. Its angles bend in ways your mind refuses to follow, "
+    "sliding just beyond comprehension. The structure seems to breathe, its moss-covered walls shifting subtly, "
+    "as though alive. A deep, instinctive terror coils in your gut. You should leave. You MUST leave. "
+    "And yet... something draws you closer.");
     Room* exterior = exteriorRoom.get();
     rooms.push_back(std::move(exteriorRoom));
-    PlaceItem(items, exterior, std::make_unique<Item>("Book",  "There is a {book} on the ground.", 0));
-    PlaceItem(items, exterior, std::make_unique<Item>("Spoon", "Further away, there is a {spoon} on the ground.", 3));
+    PlaceItem(items, exterior, std::make_unique<Item>("RUSTY KEY", "A {RUSTY KEY} lies on the ground, set in plain sight... as if waiting for you to notice it.", 1, true, "The {RUSTY KEY} lies on the floor."));
 
-    auto entryHallRoom = std::make_unique<Room>("EntryHall", "You are in the {entry hall}...");
+    auto entryHallRoom = std::make_unique<Room>("ENTRY HALL", "You are in the {ENTRY HALL}...");
     Room* entryHall = entryHallRoom.get();
     rooms.push_back(std::move(entryHallRoom));
 
     // ENTRANCES
-    auto exteriorDoor = std::make_unique<Entrance>("Door", "There is a {door} at the right.", entryHall, 2);
-    //exteriorDoor->Lock("The door is locked.");
+    auto exteriorDoor = std::make_unique<Entrance>("DOOR","A massive {DOOR} towers before you, far too large to have been made for human use.", entryHall ,0);
+    exteriorDoor->Lock("The knob is a grotesque mass of overgrown fungus, soft and glistening, faintly pulsing at your touch. You twist it. The {DOOR} won't budge.");
     exterior->AddEntrance(std::move(exteriorDoor));
 
-    auto entryHallDoor = std::make_unique<Entrance>("Door", "There is a {door} leading back.", exterior, 2);
-    //entryHallDoor->Lock("The door is locked.");
+    auto entryHallDoor = std::make_unique<Entrance>("DOOR", "There is a {DOOR} leading back.", exterior, 2);
+    entryHallDoor->Lock("The {DOOR} is locked.");
     entryHall->AddEntrance(std::move(entryHallDoor));
 
     startRoom = exterior;

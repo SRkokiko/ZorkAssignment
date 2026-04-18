@@ -1,14 +1,14 @@
 #include "DropAction.h"
+#include "../../Enums/ActionVerbs.h"
 #include "../../Core/World.h"
 #include "../../Map/Room.h"
 #include "../../Entity/Entity.h"
 #include "../../Core/Player.h"
 #include "../../Helper/Console.h"
 #include <iostream>
-using namespace std;
 
 DropAction::DropAction()
-    : Action({"drop"})
+    : Action(ActionVerbs::Drop())
 {}
 
 bool DropAction::Execute(World& world, const std::string& args)
@@ -16,7 +16,7 @@ bool DropAction::Execute(World& world, const std::string& args)
     if (args.empty())
         return false;
 
-    string lower = ToLower(args);
+    std::string lower = ToLower(args);
     Entity* entity = world.GetPlayer().FindEntity(lower);
     if (!entity)
         return false;
@@ -26,8 +26,10 @@ bool DropAction::Execute(World& world, const std::string& args)
         return false;
 
     world.GetPlayer().Drop(entity);
+    int order = (room == entity->GetOriginalRoom()) ? entity->GetOriginalOrder() : room->GetNextOrder();
+    entity->SetOrder(order);
     room->AddEntity(entity);
 
-    cout << "Dropped.\n";
+    std::cout << "Dropped " << Bold(entity->GetName()) << "." << "\n";
     return true;
 }

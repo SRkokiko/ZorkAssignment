@@ -23,6 +23,6 @@ public:
 
 private:
     std::string m_name;
-    Room* m_currentRoom;               // non-owning; World owns rooms via unique_ptr
+    Room* m_currentRoom; // non-owning; World owns rooms via unique_ptr
     std::vector<Entity*> m_inventory;  // non-owning; World owns entities via unique_ptr
 };

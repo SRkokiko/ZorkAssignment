@@ -1,27 +1,26 @@
 #include "TakeAction.h"
+#include "../../Enums/ActionVerbs.h"
 #include "../../Core/World.h"
 #include "../../Map/Room.h"
 #include "../../Entity/Entity.h"
 #include "../../Core/Player.h"
 #include "../../Helper/Console.h"
 #include <iostream>
-using namespace std;
 
 TakeAction::TakeAction()
-    : Action({"take", "get", "pick"})
+    : Action(ActionVerbs::Take())
 {}
 
 bool TakeAction::Execute(World& world, const std::string& args)
 {
     if (args.empty())
         return false;
-   
 
     Room* room = world.GetPlayer().GetCurrentRoom();
     if (!room)
         return false;
 
-    string lower = ToLower(args);
+    std::string lower = ToLower(args);
 
     Entity* match = nullptr;
     for (Entity* entity : room->GetEntities())
@@ -38,13 +37,13 @@ bool TakeAction::Execute(World& world, const std::string& args)
 
     if (!match->IsPickable())
     {
-        cout << "You can't pick that up.\n";
+        std::cout << "You can't pick that up.\n";
         return true;
     }
 
     room->RemoveEntity(match);
     world.GetPlayer().PickUp(match);
 
-    cout << "Taken.\n";
+    std::cout << "Taken " << Bold(match->GetName()) << "." << "\n";
     return true;
 }

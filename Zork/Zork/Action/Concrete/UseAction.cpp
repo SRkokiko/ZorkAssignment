@@ -1,10 +1,11 @@
 #include "UseAction.h"
+#include "../../Enums/ActionVerbs.h"
 #include "../../Core/World.h"
 #include "../../Map/Room.h"
 #include "../../Core/Player.h"
 
 UseAction::UseAction()
-    : Action({ "use" })
+    : Action(ActionVerbs::Use())
 {}
 
 bool UseAction::Execute(World& world, const std::string& args)

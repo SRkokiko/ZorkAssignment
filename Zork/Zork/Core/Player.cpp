@@ -3,7 +3,6 @@
 #include "../Map/Room.h"
 #include "../Helper/Console.h"
 #include <algorithm>
-using namespace std;
 
 Player::Player(const std::string& name)
     : m_name(name), m_currentRoom(nullptr)
@@ -31,19 +30,19 @@ void Player::PickUp(Entity* entity)
 
 void Player::Drop(Entity* entity)
 {
-    m_inventory.erase(remove(m_inventory.begin(), m_inventory.end(), entity), m_inventory.end());
+    m_inventory.erase(std::remove(m_inventory.begin(), m_inventory.end(), entity), m_inventory.end());
 }
 
 Entity* Player::FindEntity(const std::string& name) const
 {
-    string lower = ToLower(name);
+    std::string lower = ToLower(name);
     for (Entity* entity : m_inventory)
         if (ToLower(entity->GetName()) == lower)
             return entity;
     return nullptr;
 }
 
-const vector<Entity*>& Player::GetInventory() const
+const std::vector<Entity*>& Player::GetInventory() const
 {
     return m_inventory;
 }
