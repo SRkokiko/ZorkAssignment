@@ -1,5 +1,5 @@
 #include "Describable.h"
-#include "Console.h"
+#include "../Helper/Console.h"
 #include <iostream>
 using namespace std;
 
@@ -25,5 +25,5 @@ int Describable::GetOrder() const
 
 void Describable::Describe() const
 {
-    cout << Bold(m_name) << "\n" << Render(m_description) << "\n";
+    cout << Render(m_description);
 }

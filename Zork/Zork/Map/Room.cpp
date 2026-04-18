@@ -1,5 +1,5 @@
 #include "Room.h"
-#include "../Core/Console.h"
+#include "../Helper/Console.h"
 #include <iostream>
 using namespace std;
 
@@ -22,8 +22,9 @@ void Room::AddEntrance(Entrance* entrance)
 
 Room* Room::GetAdjacentRoom(const string& entranceName) const
 {
+    string lowerInput = ToLower(entranceName);
     for (Entrance* entrance : m_entrances)
-        if (entrance->GetName() == entranceName)
+        if (ToLower(entrance->GetName()) == lowerInput)
             return entrance->GetDestination();
     return nullptr;
 }
@@ -47,6 +48,12 @@ const vector<Entity*>& Room::GetEntities() const
 void Room::Describe() const
 {
     cout << Bold(m_name) << "\n" << Render(m_description) << "\n";
+
+    bool first = true;
     for (const Describable* d : m_describables)
+    {
+        if (!first) cout << " ";
         d->Describe();
+        first = false;
+    }
 }

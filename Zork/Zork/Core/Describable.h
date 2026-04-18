@@ -13,7 +13,7 @@ public:
     int GetOrder() const;
 
     /// Prints name and description
-    virtual void Describe() const; // Should this be = 0 to make it pure virtual? Will never use this really..
+    virtual void Describe() const;
 
 protected:
     std::string m_name; // All actions and interactions will be "triggered" by matching exactly the name

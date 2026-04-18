@@ -1,4 +1,13 @@
 #include "Console.h"
+#include <algorithm>
+#include <cctype>
+
+std::string ToLower(const std::string& text)
+{
+    std::string result = text;
+    std::transform(result.begin(), result.end(), result.begin(), ::tolower);
+    return result;
+}
 
 std::string Bold(const std::string& text)
 {

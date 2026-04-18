@@ -1,3 +1,6 @@
+## Project Setup
+- We won't use Solution Explorer filters. Toggle **Show All Files** to browse the project structure.
+
 ## Conventions
 
 ### Naming Classes & Structs

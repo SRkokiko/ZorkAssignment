@@ -124,25 +124,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Builders\WorldBuilder.cpp" />
-    <ClCompile Include="Builders\FirstRoomBuilder.cpp" />
+    <ClCompile Include="Builder\WorldBuilder.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="World.cpp" />
-    <ClCompile Include="Core\Console.cpp" />
+    <ClCompile Include="Core\World.cpp" />
+    <ClCompile Include="Helper\Console.cpp" />
     <ClCompile Include="Core\Describable.cpp" />
-    <ClCompile Include="Entities\Entity.cpp" />
-    <ClCompile Include="Rooms\Entrance.cpp" />
-    <ClCompile Include="Rooms\Room.cpp" />
+    <ClCompile Include="Entity\Entity.cpp" />
+    <ClCompile Include="Map\Entrance.cpp" />
+    <ClCompile Include="Map\Room.cpp" />
+    <ClCompile Include="Action\Action.cpp" />
+    <ClCompile Include="Action\Concrete\MoveAction.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Builders\WorldBuilder.h" />
-    <ClInclude Include="Builders\FirstRoomBuilder.h" />
-    <ClInclude Include="World.h" />
-    <ClInclude Include="Core\Console.h" />
+    <ClInclude Include="Builder\WorldBuilder.h" />
+    <ClInclude Include="Core\World.h" />
+    <ClInclude Include="Helper\Console.h" />
     <ClInclude Include="Core\Describable.h" />
-    <ClInclude Include="Entities\Entity.h" />
-    <ClInclude Include="Rooms\Entrance.h" />
-    <ClInclude Include="Rooms\Room.h" />
+    <ClInclude Include="Entity\Entity.h" />
+    <ClInclude Include="Map\Entrance.h" />
+    <ClInclude Include="Map\Room.h" />
+    <ClInclude Include="Action\Action.h" />
+    <ClInclude Include="Action\Concrete\MoveAction.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\Advanced Programming for AAA Video Games_Online test.pdf" />

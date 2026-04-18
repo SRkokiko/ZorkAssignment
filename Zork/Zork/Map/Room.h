@@ -1,6 +1,6 @@
 #pragma once
 #include "../Core/Describable.h"
-#include "../Entities/Entity.h"
+#include "../Entity/Entity.h"
 #include "Entrance.h"
 #include <set>
 #include <vector>
@@ -13,6 +13,7 @@ struct DescribableOrderComparator
     }
 };
 
+/// A location containing entrances to adjacent rooms and entities
 class Room : public Describable
 {
 public:
@@ -38,7 +39,7 @@ public:
     void Describe() const override;
 
 private:
-    std::multiset<Describable*, DescribableOrderComparator> m_describables; // owns all, sorted by order for Describe()
+    std::multiset<Describable*, DescribableOrderComparator> m_describables; // owns all, sorted by order for Describe() -> this could be a unique ptr!
     std::vector<Entrance*> m_entrances; // non-owning, for typed access
     std::vector<Entity*>   m_entities;  // non-owning, for typed access
 };
