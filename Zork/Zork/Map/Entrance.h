@@ -11,6 +11,15 @@ public:
 
     Room* GetDestination() const;
 
+    bool IsLocked() const;
+    void Lock(const std::string& lockedDescription = "It's locked.");
+    void Unlock();
+
+    const std::string& GetLockedDescription() const;
+
 private:
     Room* m_destination;
+
+    bool m_locked = false;
+    std::string m_lockedDescription;
 };

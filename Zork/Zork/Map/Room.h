@@ -2,6 +2,7 @@
 #include "../Core/Describable.h"
 #include "../Entity/Entity.h"
 #include "Entrance.h"
+#include <memory>
 #include <set>
 #include <vector>
 
@@ -20,17 +21,20 @@ public:
     Room(const std::string& name, const std::string& description, int order = 0);
     ~Room();
 
-    /// Adds an entrance leading to an adjacent room
-    void AddEntrance(Entrance* entrance);
+    /// Adds an entrance leading to an adjacent room (takes ownership)
+    void AddEntrance(std::unique_ptr<Entrance> entrance);
 
-    /// Returns the destination room of the entrance matching the given name, or nullptr if not found
-    Room* GetAdjacentRoom(const std::string& entranceName) const;
+    /// Returns the entrance matching the given name, or nullptr if not found
+    Entrance* GetEntrance(const std::string& entranceName) const;
 
     /// Returns all entrances
-    const std::vector<Entrance*>& GetEntrances() const;
+    const std::vector<std::unique_ptr<Entrance>>& GetEntrances() const;
 
     /// Adds an entity to the room
     void AddEntity(Entity* entity);
+
+    /// Removes an entity from the room
+    void RemoveEntity(Entity* entity);
 
     /// Returns all entities in the room
     const std::vector<Entity*>& GetEntities() const;
@@ -39,7 +43,7 @@ public:
     void Describe() const override;
 
 private:
-    std::multiset<Describable*, DescribableOrderComparator> m_describables; // owns all, sorted by order for Describe() -> this could be a unique ptr!
-    std::vector<Entrance*> m_entrances; // non-owning, for typed access
-    std::vector<Entity*>   m_entities;  // non-owning, for typed access
+    std::multiset<Describable*, DescribableOrderComparator> m_describables; // sorted by order for Describe()
+    std::vector<std::unique_ptr<Entrance>> m_entrances; // owned by this room
+    std::vector<Entity*>   m_entities;  // non-owning; World holds the unique_ptrs that own these
 };

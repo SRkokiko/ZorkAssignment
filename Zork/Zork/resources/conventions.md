@@ -27,7 +27,7 @@ e.g. `Entity.h` / `Entity.cpp`
 ## Header Rules
 - Use `#pragma once` at the top of every header
 - **Never** use `using namespace std` in `.h` files � always qualify: `std::string`, `std::vector`
-- `using namespace std` is allowed in `.cpp` files only
+- `using namespace std` is allowed in `.cpp` files only ... IS THIS ANY GOOD THO?!
 
 ## Const Correctness
 - All getters must be marked `const`

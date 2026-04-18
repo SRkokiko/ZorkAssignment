@@ -124,23 +124,37 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Action\Concrete\DropAction.cpp" />
+    <ClCompile Include="Action\Concrete\InventoryAction.cpp" />
+    <ClCompile Include="Action\Concrete\TakeAction.cpp" />
+    <ClCompile Include="Action\Concrete\UseAction.cpp" />
     <ClCompile Include="Builder\WorldBuilder.cpp" />
+    <ClCompile Include="Core\Player.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Core\World.cpp" />
     <ClCompile Include="Helper\Console.cpp" />
     <ClCompile Include="Core\Describable.cpp" />
     <ClCompile Include="Entity\Entity.cpp" />
+    <ClCompile Include="Entity\Concrete\Item.cpp" />
+    <ClCompile Include="Entity\Concrete\NPC.cpp" />
     <ClCompile Include="Map\Entrance.cpp" />
     <ClCompile Include="Map\Room.cpp" />
     <ClCompile Include="Action\Action.cpp" />
     <ClCompile Include="Action\Concrete\MoveAction.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Action\Concrete\DropAction.h" />
+    <ClInclude Include="Action\Concrete\InventoryAction.h" />
+    <ClInclude Include="Action\Concrete\TakeAction.h" />
+    <ClInclude Include="Action\Concrete\UseAction.h" />
     <ClInclude Include="Builder\WorldBuilder.h" />
+    <ClInclude Include="Core\Player.h" />
     <ClInclude Include="Core\World.h" />
     <ClInclude Include="Helper\Console.h" />
     <ClInclude Include="Core\Describable.h" />
     <ClInclude Include="Entity\Entity.h" />
+    <ClInclude Include="Entity\Concrete\Item.h" />
+    <ClInclude Include="Entity\Concrete\NPC.h" />
     <ClInclude Include="Map\Entrance.h" />
     <ClInclude Include="Map\Room.h" />
     <ClInclude Include="Action\Action.h" />

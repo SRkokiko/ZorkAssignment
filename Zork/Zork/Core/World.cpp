@@ -2,34 +2,33 @@
 #include "../Map/Room.h"
 #include "../Builder/WorldBuilder.h"
 #include "../Action/Concrete/MoveAction.h"
+#include "../Action/Concrete/UseAction.h"
+#include "../Action/Concrete/TakeAction.h"
+#include "../Action/Concrete/DropAction.h"
+#include "../Action/Concrete/InventoryAction.h"
+#include "Player.h"
 #include "../Helper/Console.h"
 #include <iostream>
 using namespace std;
 
-World::World() : m_currentRoom(nullptr)
+World::World()
+    : m_player("Player")
 {
-    WorldBuilder::Build(m_rooms, m_currentRoom);
+    Room* startRoom = nullptr;
+    WorldBuilder::Build(m_rooms, m_items, startRoom);
 
-    m_actions.push_back(new MoveAction());
+    m_player.SetCurrentRoom(startRoom);
+
+    m_actions.push_back(make_unique<MoveAction>());
+    m_actions.push_back(make_unique<UseAction>());
+    m_actions.push_back(make_unique<TakeAction>());
+    m_actions.push_back(make_unique<DropAction>());
+    m_actions.push_back(make_unique<InventoryAction>());
 }
 
-World::~World()
+Player& World::GetPlayer()
 {
-    for (Room* room : m_rooms)
-        delete room;
-
-    for (Action* action : m_actions)
-        delete action;
-}
-
-Room* World::GetCurrentRoom() const
-{
-    return m_currentRoom;
-}
-
-void World::SetCurrentRoom(Room* room)
-{
-    m_currentRoom = room;
+    return m_player;
 }
 
 void World::Run()
@@ -37,8 +36,9 @@ void World::Run()
     cout << "Welcome to (placeholder name)!\n";
     cout << "Made by Pau Bermudez Valle\n";
 
-    if (m_currentRoom)
-        m_currentRoom->Describe();
+    Room* startRoom = m_player.GetCurrentRoom();
+    if (startRoom)
+        startRoom->Describe();
 
     string input;
     while (true)
@@ -62,7 +62,7 @@ bool World::ProcessInput(const string& input)
     string verb = (spacePos == string::npos) ? cmd : cmd.substr(0, spacePos);
     string args = (spacePos == string::npos) ? "" : cmd.substr(spacePos + 1);
 
-    for (Action* action : m_actions)
+    for (const auto& action : m_actions)
     {
         if (action->Matches(verb)) {
             if (action->Execute(*this, args)) {
