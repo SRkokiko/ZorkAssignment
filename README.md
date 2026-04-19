@@ -213,7 +213,7 @@ Then eat (while still located on the kitchen):
 use pot
 ```
 
-The mansion shifts and the **HOLE** in the corridor is finally open.
+The mansion shifts and the **HOLE** in the corridor is finally accesible.
 
 ---
 
