@@ -26,6 +26,28 @@ Entrance* Room::GetEntrance(const std::string& entranceName) const
     return nullptr;
 }
 
+void Room::RemoveEntrance(const std::string& entranceName)
+{
+    std::string lowerInput = ToLower(entranceName);
+    for (auto it = m_entrances.begin(); it != m_entrances.end(); ++it)
+    {
+        if (ToLower((*it)->GetName()) == lowerInput)
+        {
+            auto range = m_describables.equal_range(it->get());
+            for (auto dit = range.first; dit != range.second; ++dit)
+            {
+                if (*dit == it->get())
+                {
+                    m_describables.erase(dit);
+                    break;
+                }
+            }
+            m_entrances.erase(it);
+            return;
+        }
+    }
+}
+
 const std::vector<std::unique_ptr<Entrance>>& Room::GetEntrances() const
 {
     return m_entrances;

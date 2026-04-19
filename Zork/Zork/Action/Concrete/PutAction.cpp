@@ -23,7 +23,7 @@ bool PutAction::Execute(World& world, const std::string& args)
     }
     if (sepPos == std::string::npos)
     {
-        std::cout << "Put it where?\n";
+            std::cout << "Put it where?\n";
         return true;
     }
 

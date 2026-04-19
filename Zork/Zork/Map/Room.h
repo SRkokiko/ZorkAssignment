@@ -30,6 +30,9 @@ public:
     /// Returns the entrance matching the given name, or nullptr if not found
     Entrance* GetEntrance(const std::string& entranceName) const;
 
+    /// Removes the entrance matching the given name
+    void RemoveEntrance(const std::string& entranceName);
+
     /// Returns all entrances
     const std::vector<std::unique_ptr<Entrance>>& GetEntrances() const;
 

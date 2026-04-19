@@ -57,6 +57,8 @@ void World::Run()
     std::cout << "Welcome to " << Bold("Lost and Found") << "\n";
     std::cout << "A Zork game made by Pau Bermudez Valle\n";
 
+    std::cout << "\nThe game features two minor endings and a true ending; let's see if you can reach the true one.\n";
+
     std::cout << "\nPlease write 'help' for a description of available actions.\n";
 
     std::cout <<

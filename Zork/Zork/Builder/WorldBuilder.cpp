@@ -39,8 +39,7 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
         "windows, yet none of them seem to show the outside they should. "
         "At the center, a fireplace burns with a light that does not flicker - powerful and absolute, the kind of "
         "heat that would reduce you to nothing. Luckily it lies far away. Still, you find yourself unwilling to "
-        "look at it directly. The room offers nothing else to rest your eyes on - nothing, except a single chair near you... " 
-        "And someone is sitting in it.");
+        "look at it directly.");
     Room* hall = hallRoom.get();
     rooms.push_back(std::move(hallRoom));
 
@@ -83,26 +82,26 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
     exterior->AddEntrance(std::move(exteriorForestPathEntrance));
 
     // CORRIDOR ENTRANCES
-    auto corridorDoorEntrance = std::make_unique<Entrance>("DOOR", "Behind you stands a massive wooden {DOOR}, leading out.", exterior, 3);
+    auto corridorDoorEntrance = std::make_unique<Entrance>("DOOR", "Behind you stands a massive wooden {DOOR}, leading out.", exterior, 4);
     corridorDoorEntrance->Lock("The {DOOR} won't open.");
     Entrance* corridorDoor = corridorDoorEntrance.get();
     corridor->AddEntrance(std::move(corridorDoorEntrance));
 
-    auto corridorWhiteDoorEntrance = std::make_unique<Entrance>("WHITE DOOR", "To your right, there is a {WHITE DOOR}. It seems to have been recently painted.", hall, 0);
+    auto corridorWhiteDoorEntrance = std::make_unique<Entrance>("WHITE DOOR", "To your right, there is a {WHITE DOOR}. It seems to have been recently painted.", hall, 1);
     Entrance* corridorWhiteDoor = corridorWhiteDoorEntrance.get();
     corridor->AddEntrance(std::move(corridorWhiteDoorEntrance));
 
-    auto corridorHoleEntrance = std::make_unique<Entrance>("HOLE", "To your left lies a human-shaped {HOLE}. As your vision settles in, you realize it perfectly matches your silhouette. Chills run down your spine. What... What on earth?!", abyss, 1);
+    auto corridorHoleEntrance = std::make_unique<Entrance>("HOLE", "To your left lies a human-shaped {HOLE}. As your vision settles in, you realize it perfectly matches your silhouette. Chills run down your spine. What... What on earth?!", abyss, 2);
     corridorHoleEntrance->Lock("... I am not going that way.");
     Entrance* corridorHole = corridorHoleEntrance.get();
     corridor->AddEntrance(std::move(corridorHoleEntrance));
 
-    auto corridorFurtherEntrance = std::make_unique<Entrance>("FURTHER", "The corridor stretches further into darkness ahead... I could go {FURTHER}...", endCorridor, 2);
+    auto corridorFurtherEntrance = std::make_unique<Entrance>("FURTHER", "The corridor stretches further into darkness ahead... I could go {FURTHER}...", endCorridor, 3);
     Entrance* corridorFurther = corridorFurtherEntrance.get();
     corridor->AddEntrance(std::move(corridorFurtherEntrance));
 
     // HALL ENTRANCES
-    auto hallWhiteDoorEntrance = std::make_unique<Entrance>("WHITE DOOR", "Behind you is a {WHITE DOOR}, leading back to the corridor.", corridor, 1);
+    auto hallWhiteDoorEntrance = std::make_unique<Entrance>("WHITE DOOR", "Behind you is a {WHITE DOOR}, leading back to the corridor.", corridor, 3);
     Entrance* hallWhiteDoor = hallWhiteDoorEntrance.get();
     hall->AddEntrance(std::move(hallWhiteDoorEntrance));
 
@@ -158,7 +157,13 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
     rustyKey->AddTargetRoom(exterior);
     rustyKey->AddTargetRoom(corridor);
     rustyKey->AddTargetRoom(mirroredCorridor);
-    rustyKey->SetOnUse([exteriorDoor, corridorDoor, mirroredCorridorDoor, exterior](World& world) {
+    rustyKey->SetOnUse([exteriorDoor, corridorDoor, mirroredCorridorDoor, exterior, corridor](World& world) {
+        if (!corridor->GetEntrance("DOOR"))
+        {
+            std::cout << Render("You start crying...") << "\n";
+            return true;
+        }
+
         bool isOutside = world.GetPlayer().GetCurrentRoom() == exterior;
         if (exteriorDoor->IsLocked()) {
             exteriorDoor->Unlock();
@@ -188,6 +193,30 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
     Item* mirror = items.back().get();
     endCorridor->AddEntity(mirror);
 
+    // BROKEN MIRROR (End Corridor) — replaces MIRROR when pot is used 
+    items.push_back(std::make_unique<Item>(
+        "BROKEN MIRROR",
+        "A {BROKEN MIRROR} hangs crookedly on the wall. The glass is shattered. You lean closer, searching - and realise the mirror shows no reflection of you at all. What...?",
+        0, false));
+    Item* brokenMirror = items.back().get();
+
+    // CHAIR (Hall)
+    items.push_back(std::make_unique<Item>(
+        "CHAIR",
+        "The room offers nothing else to rest your eyes on - nothing, except a single {CHAIR} near you... "
+        "And someone is sitting in it.",
+        1, false));
+    Item* chair = items.back().get();
+    hall->AddEntity(chair);
+
+    // EMPTY CHAIR (Hall)
+    items.push_back(std::make_unique<Item>(
+        "CHAIR",
+        "The room offers nothing else to rest your eyes on - nothing, except a single {CHAIR} near you... "
+        "The {LADY} is gone...",
+        1, false));
+    Item* emptyChair = items.back().get();
+
     // KITCHEN INGREDIENTS
     items.push_back(std::make_unique<Item>(
         "POT",
@@ -212,10 +241,10 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
         "Someone left a jar full of {WATER} on the table. The {WATER} inside is, inexplicably, boiling.",
         2, true,
         "The jar sits on the ground. The {WATER} inside is, inexplicably, boiling."));
-    Item* jar = items.back().get();
-    jar->SetTargetContainer(pot);
-    jar->SetRemovableFromContainer(false);
-    kitchen->AddEntity(jar);
+    Item* water = items.back().get();
+    water->SetTargetContainer(pot);
+    water->SetRemovableFromContainer(false);
+    kitchen->AddEntity(water);
 
     items.push_back(std::make_unique<Item>(
         "CARROT",
@@ -249,16 +278,44 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
     // FOREST ENTRY
     forest->SetOnEntry([](World& world, Room*) {
         std::cout <<
-            "\nYou run. You run until your lungs burn and your legs give out. "
+            Render("\nYou run. You run until your lungs burn and your legs give out. "
             "The forest swallows you whole - dark, indifferent, eternal. "
             "Behind you, the mansion is gone, as if it never existed. "
             "You collapse onto the cold earth and stare up at a sky full of stars that do not care. "
             "\nYou are finally free."
             "\n\n"
             "================================================\n"
-            "                    THE END                     \n"
+            "                   {THE END}                    \n"
             "             Ending 1  --  Freedom              \n"
-            "================================================\n\n";
+            "================================================\n\n");
+        world.SetGameOver();
+    });
+
+    // ABYSS ENTRY
+    abyss->SetOnEntry([](World& world, Room*) {
+        std::cout <<
+            Render(
+                "\nThere is no other way. The darkness ahead is the only "
+                "direction the universe is willing to allow.\n\n"
+
+                "You step forward.\n\n"
+
+                "The wood embraces you — and it is a perfect fit. "
+                "Obscenely perfect. The kind that was *arranged*. "
+                "Arranged before you were born. Before this place even had a name.\n\n"
+
+                "The darkness claims you.\n\n"
+
+                "And yet — for the first time — you are not lost.\n"
+                "You are not alone.\n"
+                "You are not searching.\n\n"
+
+                "You are finally {FOUND}.\n\n"
+
+                "================================================\n"
+                "                   {THE END}                    \n"
+                "         {TRUE ENDING}  --  {FOUND}             \n"
+                "================================================\n\n");
         world.SetGameOver();
     });
 
@@ -277,7 +334,7 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
             "A sudden light floods your senses. You blink until shapes begin to form.\n\n";
         });
 
-    // Kitchen ENTRY
+    // KITCHEN ENTRY
     kitchen->SetOnEntry([](World&, Room* from) {
         std::cout <<
             "You open the door expecting the corridor - basic geometry demands it - but geometry, it seems, has no authority here.\n\n";
@@ -290,7 +347,7 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
         "A pale {LADY}, draped in shadows despite the blazing light that fills the room. "
         "You can barely distinguish her features. She seems old. Older than time itself. "
         "Her eyes are fixed on you - piercing, unblinking, as though looking straight through your chest.",
-        0));
+        2));
     NPC* lady = npcs.back().get();
     hall->AddEntity(lady);
 
@@ -367,5 +424,85 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
 
     lady->SetDialogueRoot(root);
 
+
+    // ── END QUEST ──────────────────────────────────────────────────────────────────
+
+    pot->SetOnUse([kitchen, meat, water, pot, corridor, mirroredCorridor, endCorridor, exterior, mirror, brokenMirror, corridorHole, mirroredCorridorHole, chair, emptyChair, lady, hall](World& world) {
+        if (world.GetPlayer().GetCurrentRoom() != kitchen) {
+            std::cout << "I would feel safer eating this in the kitchen in the woods. I felt at ease there...\n";
+            return true;
+        }
+
+        const auto& contents = pot->GetContainedItems();
+        bool hasMeat = false;
+        bool hasWater = false;
+        for (Item* item : contents) {
+            if (item == meat) { hasMeat = true; }
+            if (item == water) { hasWater = true; }
+        }
+
+        if (contents.size() < 4 || !hasWater) {
+            std::cout << Render("The {POT} doesn't feel ready yet.\n");
+            return true;
+        }
+
+        if (hasMeat) {
+            std::cout <<
+                Render("The stew smells of something warm and honest. Like a memory you almost forgot. "
+                    "You take a long, careful sip.\n\n"
+                    "Then you taste it. Under the warmth - something rotten. Something deeply wrong.\n\n"
+                    "Your throat closes. Your hands find the floor before you tell them to. "
+                    "You try to scream but your body has already stopped listening. "
+                    "The kitchen tilts. The shadows blur. The last thing you see is the pot, still steaming, "
+                    "as if nothing happened at all.\n"
+                    "\nYou are a sinner. And sinners do not rest."
+                    "\n\n"
+                    "================================================\n"
+                    "                    {THE END}                   \n"
+                    "             Ending 2  --  Sinner               \n"
+                    "================================================\n\n");
+
+            world.SetGameOver();
+
+        }
+        else {
+            std::cout << Render("The stew smells of something warm and honest. Like a memory you almost forgot. You take a long, careful sip. It is, despite everything, exactly what you needed.\n");
+
+            if (corridor->GetEntrance("DOOR")) {
+                corridor->RemoveEntrance("DOOR");
+                mirroredCorridor->RemoveEntrance("DOOR");
+
+                auto newCorridorDoor = std::make_unique<Entrance>("WALL",
+                    "Where the exit once stood, there is now only {WALL} - solid wood, seamless, as though a door never existed here at all. "
+                    "Oh God... oh God... oh dear God, please have mercy upon my soul.", exterior, 0);
+                newCorridorDoor->Lock("You charge yourself against the {WALL}. The wood does not yield. You crumple to the floor. There is no escape. There has never been an escape.");
+                corridor->AddEntrance(std::move(newCorridorDoor));
+
+                auto newMirroredDoor = std::make_unique<Entrance>("WALL",
+                    "Where the exit once stood, there is now only {WALL} - solid wood, seamless, as though a door never existed here at all. "
+                    "Oh God... oh God... oh dear God, please have mercy upon my soul.", exterior, 0);
+                newMirroredDoor->Lock("You charge yourself against the {WALL}. The wood does not yield. You crumple to the floor. There is no escape. There has never been an escape.");
+                mirroredCorridor->AddEntrance(std::move(newMirroredDoor));
+
+                hall->RemoveEntity(chair);
+                hall->AddEntity(emptyChair);
+                hall->RemoveEntity(lady);
+
+                endCorridor->RemoveEntity(mirror);
+                endCorridor->AddEntity(brokenMirror);
+
+                corridorHole->Unlock();
+                mirroredCorridorHole->Unlock();
+            }
+        }
+
+        std::vector<Item*> toRemove(contents.begin(), contents.end());
+        for (Item* item : toRemove)
+            pot->RemoveContainedItem(item);
+
+        return true;
+    });
+
+    // SET STARTING ROOM
     startRoom = exterior;
 }
