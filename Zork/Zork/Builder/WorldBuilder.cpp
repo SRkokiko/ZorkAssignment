@@ -7,15 +7,6 @@
 #include "../Core/World.h"
 #include <iostream>
 
-// Raw pointer is extracted after push_back to avoid invalidation if the unique_ptr were moved first
-template<typename T>
-static T* Place(std::vector<std::unique_ptr<T>>& vec, Room* room, std::unique_ptr<T> entity)
-{
-    vec.push_back(std::move(entity));
-    T* raw = vec.back().get();
-    room->AddEntity(raw);
-    return raw;
-}
 
 void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<std::unique_ptr<Item>>& items, std::vector<std::unique_ptr<NPC>>& npcs, Room*& startRoom)
 {
@@ -48,7 +39,8 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
         "windows, yet none of them seem to show the outside they should. "
         "At the center, a fireplace burns with a light that does not flicker - powerful and absolute, the kind of "
         "heat that would reduce you to nothing. Luckily it lies far away. Still, you find yourself unwilling to "
-        "look at it directly.");
+        "look at it directly. The room offers nothing else to rest your eyes on - nothing, except a single chair near you... " 
+        "And someone is sitting in it.");
     Room* hall = hallRoom.get();
     rooms.push_back(std::move(hallRoom));
 
@@ -71,7 +63,11 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
 
     // KITCHEN
     auto kitchenRoom = std::make_unique<Room>("KITCHEN",
-        "The room is a kitchen.");
+        "You find yourself back in the woods. Wh- What? ...\n\n"
+        "The trees are tall and quiet, their branches letting through just enough light to see by. Moss covers "
+        "everything. The air smells of pine and rain. It is, despite everything, peaceful. "
+        "A worn wooden table sits among the roots, set as though someone knew you were coming."
+        " It is full of ingredients. ");
     Room* kitchen = kitchenRoom.get();
     rooms.push_back(std::move(kitchenRoom));
 
@@ -111,8 +107,12 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
     hall->AddEntrance(std::move(hallWhiteDoorEntrance));
 
     // KITCHEN ENTRANCES
-    auto kitchenRoomHallEntrance = std::make_unique<Entrance>("DOOR", "A plain {DOOR} leads back to the inconmensurable room, where the {LADY} rests.", hall, 0);
+    auto kitchenRoomHallEntrance = std::make_unique<Entrance>("DOOR", "Behind you, a plain {DOOR} hangs in open air, attached to nothing.", hall, 7);
     kitchen->AddEntrance(std::move(kitchenRoomHallEntrance));
+
+    auto kitchenRoomDeepEntrance = std::make_unique<Entrance>("DEEPER", "You could try wandering {DEEPER} into the woods.", hall, 8);
+    kitchenRoomDeepEntrance->Lock("You cannot walk far in any direction. You don't know why. Your feet simply refuse. You turn back.");
+    kitchen->AddEntrance(std::move(kitchenRoomDeepEntrance));
 
     // ABYSS ENTRANCES
     auto abyssHoleEntrance = std::make_unique<Entrance>("HOLE", "Behind you is a human-shaped {HOLE}, leading back to the corridor.", corridor, 0);
@@ -147,11 +147,13 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
     // ── ITEMS ─────────────────────────────────────────────────────────────────
 
     // Rusty Key (Exterior) — toggles the Exterior <-> Corridor lock
-    Item* rustyKey = Place(items, exterior, std::make_unique<Item>(
+    items.push_back(std::make_unique<Item>(
         "RUSTY KEY",
         "A {RUSTY KEY} lies on the ground, set in plain sight... as if waiting for you to notice it.",
         1, true,
         "The {RUSTY KEY} lies on the floor."));
+    Item* rustyKey = items.back().get();
+    exterior->AddEntity(rustyKey);
 
     rustyKey->AddTargetRoom(exterior);
     rustyKey->AddTargetRoom(corridor);
@@ -179,10 +181,61 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
     });
 
     // Mirror (End Corridor)
-    Item* mirror = Place(items, endCorridor, std::make_unique<Item>(
+    items.push_back(std::make_unique<Item>(
         "MIRROR",
         "A {MIRROR} hangs on the wall in front of you. It is completely covered in grease, yet you can still make out the faint reflection of an unrecognizable human face. Is... is that me...? Oh god...",
         0, false));
+    Item* mirror = items.back().get();
+    endCorridor->AddEntity(mirror);
+
+    // KITCHEN INGREDIENTS
+    items.push_back(std::make_unique<Item>(
+        "MEAT",
+        "Something wrapped loosely - {MEAT}, you assume. You try not to think too hard about what it is.",
+        0, true,
+        "The {MEAT} lies on the ground."));
+    Item* meat = items.back().get();
+    kitchen->AddEntity(meat);
+
+    items.push_back(std::make_unique<Item>(
+        "JAR",
+        "Someone left a {JAR} full of water on the table. The water is very still.",
+        1, true,
+        "The {JAR} sits on the ground. The water inside undisturbed."));
+    Item* jar = items.back().get();
+    kitchen->AddEntity(jar);
+
+    items.push_back(std::make_unique<Item>(
+        "CARROT",
+        "Perfectly peeled and cut, a {CARROT} lies on the table. Too orange to be a carrot.",
+        2, true,
+        "The {CARROT} pieces lay scattered on the floor."));
+    Item* carrot = items.back().get();
+    kitchen->AddEntity(carrot);
+
+    items.push_back(std::make_unique<Item>(
+        "POTATO",
+        "A {POTATO}, still earthy from the ground. Honest and unremarkable. A relief.",
+        3, true,
+        "The {POTATO} lies on the ground."));
+
+    Item* potato = items.back().get();
+    kitchen->AddEntity(potato);
+    items.push_back(std::make_unique<Item>(
+        "MUSHROOM",
+        "There is a pale {MUSHROOM} growing from the roots at your feet. You did not notice it until just now.",
+        4, true,
+        "The {MUSHROOM} sits on the ground. It is, somehow, rooted to the ground, growing again... How?"));
+    Item* mushroom = items.back().get();
+    kitchen->AddEntity(mushroom);
+
+    items.push_back(std::make_unique<Item>(
+        "POT",
+        "The clay {POT} at the center of the table is old and dark with long use. Empty. The ingredients around it seem to yearn to fill it.",
+        5, true,
+        "The {POT} rests undisturbed on the ground."));
+    Item* pot = items.back().get();
+    kitchen->AddEntity(pot);
 
     // ── EVENTS ─────────────────────────────────────────────────────────────────
  
@@ -214,80 +267,88 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
             "A sudden light floods your senses. You blink until shapes begin to form.\n\n";
         });
 
+    // Kitchen ENTRY
+    kitchen->SetOnEntry([](World&, Room* from) {
+        std::cout <<
+            "You open the door expecting the corridor - basic geometry demands it - but geometry, it seems, has no authority here.\n\n";
+        });
+
     // ── NPCS ──────────────────────────────────────────────────────────────────
 
     // LADY (Hall)
-    NPC* lady = Place(npcs, hall, std::make_unique<NPC>("LADY",
-        "There is a chair near you... And someone is sitting in it. A pale {LADY}, draped in shadows despite the blazing light that fills the room. "
+    npcs.push_back(std::make_unique<NPC>("LADY",
+        "A pale {LADY}, draped in shadows despite the blazing light that fills the room. "
         "You can barely distinguish her features. She seems old. Older than time itself. "
         "Her eyes are fixed on you - piercing, unblinking, as though looking straight through your chest.",
         0));
+    NPC* lady = npcs.back().get();
+    hall->AddEntity(lady);
 
-    DialogueNode* root = lady->AddNode("...");
-    DialogueNode* nodeHello = lady->AddNode("...");
-    DialogueNode* nodeAreYouReal = lady->AddNode("Yes.");
-    DialogueNode* nodeIAmToo = lady->AddNode("Yes. We all are. *She smiles");
-    DialogueNode* nodeWhoAreYou = lady->AddNode("I am.");
-    DialogueNode* nodeWhatIsThisPlace = lady->AddNode("This is.");
-    DialogueNode* nodeWhatShouldIDo = lady->AddNode("What do you want to do?");
-    DialogueNode* nodeYouAreAlive = lady->AddNode("You are alive.");
-    DialogueNode* nodeYouAreFound = lady->AddNode("I found you. *She smiles");
-    DialogueNode* nodeEat = lady->AddNode("The {YELLOW ROOM} will lead you to the kitchen. Help yourself; for I do not hunger. *She smiles");
-    DialogueNode* nodeEnd = lady->AddNode("Do NOT eat the {FLESH}. *She smiles");
+    DialogueNode* root = lady->AddNode("'...'");
+    DialogueNode* nodeHello = lady->AddNode("'...'");
+    DialogueNode* nodeAreYouReal = lady->AddNode("'Yes.'");
+    DialogueNode* nodeIAmToo = lady->AddNode("'Yes. We all are.' A smile. '...'");
+    DialogueNode* nodeWhoAreYou = lady->AddNode("'I am.'");
+    DialogueNode* nodeWhatIsThisPlace = lady->AddNode("'This is.'");
+    DialogueNode* nodeWhatShouldIDo = lady->AddNode("'What do you want to do?'");
+    DialogueNode* nodeYouAreAlive = lady->AddNode("'You are alive.'");
+    DialogueNode* nodeYouAreFound = lady->AddNode("'I found you.' A smile. '...'");
+    DialogueNode* nodeEat = lady->AddNode("'The other door will lead you to the kitchen. Help yourself; for I do not hunger.' A smile. '...'");
+    DialogueNode* nodeEnd = lady->AddNode("'Do NOT eat the {MEAT}.' A smile. '...'");
 
     root->SetOptions({
-        { "Hello?", nodeHello },
-        { "...", nullptr }
+        { "'Hello?'", nodeHello },
+        { "'...'", nullptr }
     });
 
     nodeHello->SetOptions({
-        { "Are you real?",  nodeAreYouReal },
-        { "Who are you?", nodeWhoAreYou },
-        { "What is this place?", nodeWhatIsThisPlace },
-        { "What should I do?", nodeWhatShouldIDo },
+        { "'Are you real?'",  nodeAreYouReal },
+        { "'Who are you?'", nodeWhoAreYou },
+        { "'What is this place?'", nodeWhatIsThisPlace },
+        { "'What should I do?'", nodeWhatShouldIDo },
     });
 
     nodeAreYouReal->SetOptions({
-        { "Hum... Okay.", nodeHello },
-        { "...", nodeHello }
+        { "'Hum... Okay.'", nodeHello },
+        { "'...'", nodeHello }
     });
 
     nodeWhoAreYou->SetOptions({
-        { "Hum... Okay.", nodeHello },
-        { "I am too.", nodeIAmToo }
+        { "'Hum... Okay.'", nodeHello },
+        { "'I am too.'", nodeIAmToo }
     });
 
     nodeIAmToo->SetOptions({
-        { "...", nodeHello }
+        { "'...'", nodeHello }
     });
 
     nodeWhatIsThisPlace->SetOptions({
-        { "...", nodeHello }
+        { "'...'", nodeHello }
     });
 
     nodeWhatShouldIDo->SetOptions({
-        { "Live.", nodeYouAreAlive },
-        { "Be found.", nodeYouAreFound },
-        { "Eat.", nodeEat }
+        { "'Live.'", nodeYouAreAlive },
+        { "'Be found.'", nodeYouAreFound },
+        { "'Eat.'", nodeEat }
     });
 
     nodeYouAreAlive->SetOptions({
-        { "I am?", nodeHello }
+        { "'I am?'", nodeHello }
     });
 
     nodeYouAreFound->SetOptions({
-        { "Thanks?", nodeHello }
+        { "'Thanks?'", nodeHello }
     });
 
     nodeEat->SetOptions({
-        { "Thanks?", nodeEnd }
+        { "'Thanks?'", nodeEnd }
     });
 
     nodeEnd->onReach = [hall, kitchen](World&) {
         if (!hall->GetEntrance("YELLOW DOOR")) {
-            std::cout << Render("... {YELLOW DOOR}? What {YELLOW DOOR}?\n");
+            std::cout << Render("... Other door? What other door?\n");
             hall->AddEntrance(std::make_unique<Entrance>("YELLOW DOOR",
-                "Beyond the {WHITE DOOR} awaits a {YELLOW DOOR}. The paint is fresh - still bleeding down the wood. "
+                "Beyond the {WHITE DOOR} awaits a {YELLOW DOOR}, set into the same wall, not a step away. The paint is fresh - still bleeding down the wood. "
                 "That door was not there before. You are certain of this. You are trying very hard to remain certain of this.",
                 kitchen,
                 hall->GetNextOrder()));
@@ -296,6 +357,6 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
 
     lady->SetDialogueRoot(root);
 
-    //startRoom = hall;
-    startRoom = exterior;
+    startRoom = kitchen;
+    //startRoom = exterior;
 }
