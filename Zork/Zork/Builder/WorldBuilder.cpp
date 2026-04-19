@@ -35,7 +35,7 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
     // HALL
     auto hallRoom = std::make_unique<Room>("HALL",
         "The room is wrong. Not in any way you can point to - just wrong. It stretches far beyond what the mansion "
-        "could ever contain, larger than anything that has any right to exist indoors.The walls are dotted with "
+        "could ever contain, larger than anything that has any right to exist indoors. The walls are dotted with "
         "windows, yet none of them seem to show the outside they should. "
         "At the center, a fireplace burns with a light that does not flicker - powerful and absolute, the kind of "
         "heat that would reduce you to nothing. Luckily it lies far away. Still, you find yourself unwilling to "
@@ -188,7 +188,7 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
     // Mirror (End Corridor)
     items.push_back(std::make_unique<Item>(
         "MIRROR",
-        "A {MIRROR} hangs on the wall in front of you. It is completely covered in grease, yet you can still make out the faint reflection of an unrecognizable human face. Is... is that me...? Oh god...",
+        "A {MIRROR} hangs on the wall in front of you. It is completely covered in grease, yet you can still make out the faint reflection of an unrecognizable human face. Is... is that me...? Oh God...",
         0, false));
     Item* mirror = items.back().get();
     endCorridor->AddEntity(mirror);
@@ -278,7 +278,7 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
     // FOREST ENTRY
     forest->SetOnEntry([](World& world, Room*) {
         std::cout <<
-            Render("\nYou run. You run until your lungs burn and your legs give out. "
+            Render("You run. You run until your lungs burn and your legs give out. "
             "The forest swallows you whole - dark, indifferent, eternal. "
             "Behind you, the mansion is gone, as if it never existed. "
             "You collapse onto the cold earth and stare up at a sky full of stars that do not care. "
@@ -295,18 +295,18 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
     abyss->SetOnEntry([](World& world, Room*) {
         std::cout <<
             Render(
-                "\nThere is no other way. The darkness ahead is the only "
+                "There is no other way. The darkness ahead is the only "
                 "direction the universe is willing to allow.\n\n"
 
                 "You step forward.\n\n"
 
-                "The wood embraces you — and it is a perfect fit. "
-                "Obscenely perfect. The kind that was *arranged*. "
+                "The wood embraces you - and it is a perfect fit. "
+                "Obscenely perfect. The kind that was arranged. "
                 "Arranged before you were born. Before this place even had a name.\n\n"
 
                 "The darkness claims you.\n\n"
 
-                "And yet — for the first time — you are not lost.\n"
+                "And yet - for the first time - you don't feel lost.\n"
                 "You are not alone.\n"
                 "You are not searching.\n\n"
 
@@ -314,7 +314,7 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
 
                 "================================================\n"
                 "                   {THE END}                    \n"
-                "         {TRUE ENDING}  --  {FOUND}             \n"
+                "           {TRUE ENDING}  --  {FOUND}           \n"
                 "================================================\n\n");
         world.SetGameOver();
     });
