@@ -13,11 +13,14 @@ public:
     int GetOrder() const;
     void SetOrder(int order);
 
-    /// Prints name and description
+    /// Prints the name
+    virtual void DescribeName() const;
+
+    /// Prints description
     virtual void Describe() const;
 
 protected:
     std::string m_name; // All actions and interactions will be "triggered" by matching exactly the name
     std::string m_description;
-    int m_order; // Order will simply be used to know in which order to trigger each description
+    int m_order; // Order will simply be used to know in which order to display each description
 };

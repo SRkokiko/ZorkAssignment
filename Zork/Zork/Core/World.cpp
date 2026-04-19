@@ -9,6 +9,7 @@
 #include "../Action/Concrete/LookAction.h"
 #include "../Action/Concrete/HelpAction.h"
 #include "../Action/Concrete/TalkAction.h"
+#include "../Action/Concrete/PutAction.h"
 #include "Player.h"
 #include "../Helper/Console.h"
 #include <iostream>
@@ -28,6 +29,7 @@ World::World()
     m_actions.push_back(std::make_unique<MoveAction>());
     m_actions.push_back(std::make_unique<UseAction>());
     m_actions.push_back(std::make_unique<TakeAction>());
+    m_actions.push_back(std::make_unique<PutAction>());
     m_actions.push_back(std::make_unique<DropAction>());
     m_actions.push_back(std::make_unique<InventoryAction>());
     m_actions.push_back(std::make_unique<LookAction>());
@@ -52,8 +54,8 @@ bool World::IsGameOver() const
 
 void World::Run()
 {
-    std::cout << "Welcome to Zork!\n";
-    std::cout << "Made by Pau Bermudez Valle\n";
+    std::cout << "Welcome to " << Bold("Lost and Found") << "\n";
+    std::cout << "A Zork game made by Pau Bermudez Valle\n";
 
     std::cout << "\nPlease write 'help' for a description of available actions.\n";
 

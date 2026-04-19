@@ -26,7 +26,7 @@ bool TalkAction::Execute(World& world, const std::string& args)
     NPC* npc = nullptr;
     for (Entity* entity : room->GetEntities())
     {
-        if (ToLower(entity->GetName()) == args)
+        if (ToLower(entity->GetName()) == ToLower(args))
         {
             npc = dynamic_cast<NPC*>(entity);
             if (npc) break;
@@ -42,7 +42,9 @@ bool TalkAction::Execute(World& world, const std::string& args)
     DialogueNode* current = npc->GetActiveRoot();
     if (!current)
     {
-        std::cout << "\n" << Bold(npc->GetName()) << " has nothing to say.\n";
+        std::cout << "\n";
+        npc->DescribeName();
+        std::cout << " has nothing to say.\n";
         return true;
     }
 
@@ -50,11 +52,15 @@ bool TalkAction::Execute(World& world, const std::string& args)
     {
         if (current->options.empty())
         {
-            std::cout << "- " << Bold(npc->GetName()) << ": " << Render(current->npcText) << "\n";
+            std::cout << "- ";
+            npc->DescribeName();
+            std::cout << ": " << Render(current->npcText) << "\n";
             break;
         }
 
-        std::cout << "- " << Bold(npc->GetName()) << ": " << Render(current->npcText) << "\n\n";
+        std::cout << "- ";
+        npc->DescribeName();
+        std::cout << ": " << Render(current->npcText) << "\n\n";
 
         for (std::size_t i = 0; i < current->options.size(); ++i)
             std::cout << "  [" << (i + 1) << "] " << Render(current->options[i].playerText) << "\n";
@@ -68,7 +74,6 @@ bool TalkAction::Execute(World& world, const std::string& args)
         if (input == "bye")
         {
             std::cout << "- " << Bold("YOU") << ": " << Render("'Sorry, I have to go... Talk later.'") << "\n";
-            std::cout << "- " << Bold(npc->GetName()) << ": " << Render("'Later...' She smiles.") << "\n";
             break;
         }
 

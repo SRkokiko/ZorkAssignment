@@ -14,12 +14,18 @@ DropAction::DropAction()
 bool DropAction::Execute(World& world, const std::string& args)
 {
     if (args.empty())
-        return false;
+    {
+        std::cout << "Drop what?\n";
+        return true;
+    }
 
     std::string lower = ToLower(args);
     Entity* entity = world.GetPlayer().FindEntity(lower);
     if (!entity)
-        return false;
+    {
+        std::cout << "You don't have " << Bold(lower) << ".\n";
+        return true;
+    }
 
     Room* room = world.GetPlayer().GetCurrentRoom();
     if (!room)
@@ -30,6 +36,8 @@ bool DropAction::Execute(World& world, const std::string& args)
     entity->SetOrder(order);
     room->AddEntity(entity);
 
-    std::cout << "Dropped " << Bold(entity->GetName()) << "." << "\n";
+    std::cout << "Dropped ";
+    entity->DescribeName();
+    std::cout << ".\n";
     return true;
 }

@@ -190,52 +190,59 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
 
     // KITCHEN INGREDIENTS
     items.push_back(std::make_unique<Item>(
+        "POT",
+        "The clay {POT} at the center of the table is old and dark with long use.",
+        0, true,
+        "The {POT} rests undisturbed on the ground.",
+        true));
+    Item* pot = items.back().get();
+    kitchen->AddEntity(pot);
+
+    items.push_back(std::make_unique<Item>(
         "MEAT",
         "Something wrapped loosely - {MEAT}, you assume. You try not to think too hard about what it is.",
-        0, true,
+        1, true,
         "The {MEAT} lies on the ground."));
     Item* meat = items.back().get();
+    meat->SetTargetContainer(pot);
     kitchen->AddEntity(meat);
 
     items.push_back(std::make_unique<Item>(
-        "JAR",
-        "Someone left a {JAR} full of water on the table. The water is very still.",
-        1, true,
-        "The {JAR} sits on the ground. The water inside undisturbed."));
+        "WATER",
+        "Someone left a jar full of {WATER} on the table. The {WATER} inside is, inexplicably, boiling.",
+        2, true,
+        "The jar sits on the ground. The {WATER} inside is, inexplicably, boiling."));
     Item* jar = items.back().get();
+    jar->SetTargetContainer(pot);
+    jar->SetRemovableFromContainer(false);
     kitchen->AddEntity(jar);
 
     items.push_back(std::make_unique<Item>(
         "CARROT",
         "Perfectly peeled and cut, a {CARROT} lies on the table. Too orange to be a carrot.",
-        2, true,
+        3, true,
         "The {CARROT} pieces lay scattered on the floor."));
     Item* carrot = items.back().get();
+    carrot->SetTargetContainer(pot);
     kitchen->AddEntity(carrot);
 
     items.push_back(std::make_unique<Item>(
         "POTATO",
         "A {POTATO}, still earthy from the ground. Honest and unremarkable. A relief.",
-        3, true,
+        4, true,
         "The {POTATO} lies on the ground."));
-
     Item* potato = items.back().get();
+    potato->SetTargetContainer(pot);
     kitchen->AddEntity(potato);
+
     items.push_back(std::make_unique<Item>(
         "MUSHROOM",
         "There is a pale {MUSHROOM} growing from the roots at your feet. You did not notice it until just now.",
-        4, true,
+        5, true,
         "The {MUSHROOM} sits on the ground. It is, somehow, rooted to the ground, growing again... How?"));
     Item* mushroom = items.back().get();
+    mushroom->SetTargetContainer(pot);
     kitchen->AddEntity(mushroom);
-
-    items.push_back(std::make_unique<Item>(
-        "POT",
-        "The clay {POT} at the center of the table is old and dark with long use. Empty. The ingredients around it seem to yearn to fill it.",
-        5, true,
-        "The {POT} rests undisturbed on the ground."));
-    Item* pot = items.back().get();
-    kitchen->AddEntity(pot);
 
     // ── EVENTS ─────────────────────────────────────────────────────────────────
  
@@ -248,7 +255,10 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
             "You collapse onto the cold earth and stare up at a sky full of stars that do not care. "
             "\nYou are finally free."
             "\n\n"
-            "--- THE END ---\n\n";
+            "================================================\n"
+            "                    THE END                     \n"
+            "             Ending 1  --  Freedom              \n"
+            "================================================\n\n";
         world.SetGameOver();
     });
 
@@ -357,6 +367,5 @@ void WorldBuilder::Build(std::list<std::unique_ptr<Room>>& rooms, std::vector<st
 
     lady->SetDialogueRoot(root);
 
-    startRoom = kitchen;
-    //startRoom = exterior;
+    startRoom = exterior;
 }

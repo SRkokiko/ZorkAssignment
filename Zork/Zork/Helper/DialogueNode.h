@@ -9,7 +9,7 @@ struct DialogueNode;
 struct DialogueOption
 {
     std::string playerText;
-    DialogueNode* next; // dialoge resets on nullptr
+    DialogueNode* next = nullptr; // dialoge resets on nullptr
 };
 
 struct DialogueNode

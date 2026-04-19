@@ -20,7 +20,7 @@ namespace ActionVerbs {
     }
 
     inline const std::vector<std::string>& Drop() {
-        static const std::vector<std::string> v = { "drop", "put", "place", "leave", "throw", "discard", "toss", "release", "set" };
+        static const std::vector<std::string> v = { "drop", "leave", "throw", "discard", "toss", "release", "set" };
         return v;
     }
 
@@ -41,6 +41,11 @@ namespace ActionVerbs {
 
     inline const std::vector<std::string>& Talk() {
         static const std::vector<std::string> v = { "talk", "speak", "chat", "ask", "greet" };
+        return v;
+    }
+
+    inline const std::vector<std::string>& Put() {
+        static const std::vector<std::string> v = { "put", "place", "insert", "add", "store" };
         return v;
     }
 

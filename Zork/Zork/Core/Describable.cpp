@@ -27,6 +27,11 @@ void Describable::SetOrder(int order)
     m_order = order;
 }
 
+void Describable::DescribeName() const
+{
+    std::cout << Bold(m_name);
+}
+
 void Describable::Describe() const
 {
     std::cout << Render(m_description);

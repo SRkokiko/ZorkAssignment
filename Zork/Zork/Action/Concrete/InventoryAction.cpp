@@ -21,6 +21,10 @@ bool InventoryAction::Execute(World& world, const std::string& args)
 
     std::cout << "You are carrying:\n";
     for (Entity* entity : inv)
-        std::cout << "  - " << Bold(entity->GetName()) << "\n";
+    {
+        std::cout << "  - ";
+        entity->DescribeName();
+        std::cout << "\n";
+    }
     return true;
 }
