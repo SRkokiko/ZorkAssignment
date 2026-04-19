@@ -41,6 +41,51 @@ Built with **Visual Studio 2019 Community** targeting Windows x64.
 
 The project compiles cleanly at **Warning Level 3** (`/W3`) with no warnings.
 
+> **Note — Solution Explorer filters:** The `.vcxproj` filters are not fully configured, so the default Solution Explorer view may appear incomplete. Right-click the project node and select **Show All Files** to see every source file in its actual folder structure.
+
+---
+
+## Code Structure
+
+The project is split into six modules with clear responsibilities:
+
+```
+Zork/
+├── main.cpp              # Entry point
+├── Core/
+│   ├── World             # Main loop, action dispatch, game-over. Owns and manages all pointers
+│   ├── Player            # Tracks current room + inventory
+│   └── Describable       # Base for all game elements (entities, rooms, entrances): name, description, display order
+├── Action/
+│   ├── Action            # Interface: Matches(verb) + Execute(world, args)
+│   └── Concrete/         # MoveAction, TakeAction, DropAction, UseAction,
+│                         # PutAction, InventoryAction, LookAction,
+│                         # HelpAction, TalkAction
+├── Entity/
+│   ├── Entity            # Base: location tracking, display order
+│   ├── Concrete/Item     # Usable/containable objects with puzzle callbacks
+│   └── Concrete/NPC      # Characters with dialogue-tree state
+├── Map/
+│   ├── Room              # Location: entity list + entrances, onEntry callback
+│   └── Entrance          # Exit with optional lock
+├── Builder/
+│   └── WorldBuilder      # Wires up all rooms, items, NPCs, and puzzles
+├── Helper/
+│   ├── Console           # Text formatting utilities
+│   └── DialogueNode      # Dialogue tree node: text, options, onReach callback
+└── Enums/
+    ├── ActionVerbs        # Verb → action type mapping
+    └── UnknownPhrases     # Fallback responses for unrecognised input
+```
+
+---
+
+## Reflections & Design Decisions
+
+- **Memory management via unique ownership** — I learned what `unique_ptr` is and how it works: a smart pointer that owns its object exclusively and frees it automatically when it goes out of scope. The interesting design challenge was figuring out how to centralise all ownership in a single class (`World`), which lets every other class hold raw pointers freely — moving an item from a room to the player's inventory is just a pointer reassignment, with no risk of double-frees or leaks anywhere else.
+
+- **Narrative over mechanics** — Zork-type games live or die by their writing, not their systems. Rather than building combat or complex mechanics, I focused on making the game feel like an interactive horror novel: rich room descriptions, a slow-burn story, and dialogue that rewards exploration. The architecture reflects this — `onEntry` callbacks, dialogue trees, and puzzle callbacks all exist primarily to serve the narrative.
+
 ---
 
 ## How to Play

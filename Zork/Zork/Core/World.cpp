@@ -86,6 +86,9 @@ void World::Run()
         if (!ProcessInput(input) || m_gameOver)
             break;
     }
+
+    std::cout << "\nPress Enter to exit...";
+    std::cin.get();
 }
 
 bool World::ProcessInput(const std::string& input)
