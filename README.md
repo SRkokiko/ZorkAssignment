@@ -14,7 +14,7 @@ The game has **two minor endings** and a **true ending** — see if you can reac
 
 ## Repository
 
-[https://github.com/SRkokiko/ZorkAssignment](https://github.com/SRkokiko/ZorkAssignment)
+[https://github.com/SRkokiko/ZorkAssignment](https://github.com/SRkokiko/Zork)
 
 ---
 
@@ -62,7 +62,7 @@ Zork/
 │                         # PutAction, InventoryAction, LookAction,
 │                         # HelpAction, TalkAction
 ├── Entity/
-│   ├── Entity            # Base: location tracking, display order
+│   ├── Entity            # Base: location tracking
 │   ├── Concrete/Item     # Usable/containable objects with puzzle callbacks
 │   └── Concrete/NPC      # Characters with dialogue-tree state
 ├── Map/
